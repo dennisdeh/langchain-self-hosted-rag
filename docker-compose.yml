@@ -8,7 +8,7 @@ networks:
     driver: bridge
     ipam:
       config:
-        - subnet: 178.1.1.0/24  # Define the subnet for the network
+        - subnet: 177.1.1.0/24  # Define the subnet for the network
 
 
 x-ollama: &service-ollama
@@ -16,7 +16,7 @@ x-ollama: &service-ollama
   container_name: lc-ollama
   networks:
     vn:
-      ipv4_address: 178.1.1.101
+      ipv4_address: 177.1.1.101
   restart: unless-stopped
   ports:
     - ${OLLAMA_PORT_HOST}:${OLLAMA_PORT_CONT}
@@ -28,7 +28,7 @@ x-init-ollama: &init-ollama
   container_name: lc-ollama-pull-llama
   networks:
     vn:
-      ipv4_address: 178.1.1.102
+      ipv4_address: 177.1.1.102
   volumes:
     - ollama_storage:/root/.ollama
   entrypoint: /bin/sh
@@ -39,14 +39,14 @@ x-init-ollama: &init-ollama
 services:
   mariadb:
     container_name: lc-mariadb
-    image: mariadb:latest
+    image: mariadb:lts-ubi
     command:
       - --max_allowed_packet=107374182400  # 100GB
       - --max_connections=20000
       - --innodb_buffer_pool_size=256M
     networks:
       vn:
-        ipv4_address: 178.1.1.110
+        ipv4_address: 177.1.1.110
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD}
@@ -75,7 +75,7 @@ services:
     image: adminer:latest
     networks:
       vn:
-        ipv4_address: 178.1.1.120
+        ipv4_address: 177.1.1.120
     environment:
       ADMINER_DEFAULT_SERVER: mariadb
     restart: always
@@ -83,11 +83,11 @@ services:
       - ${ADMINER_PORT_HOST}:${ADMINER_PORT_CONT}
 
   postgres:
-    image: lc-postgres:16-alpine
+    image: postgres:16-alpine
     networks:
       vn:
-        ipv4_address: 178.1.1.111
-    container_name: postgres
+        ipv4_address: 177.1.1.111
+    container_name: lc-postgres
     restart: unless-stopped
     ports:
       - ${POSTGRES_PORT_HOST}:${POSTGRES_PORT_CONT}
@@ -108,7 +108,7 @@ services:
     container_name: lc-qdrant
     networks:
       vn:
-        ipv4_address: 178.1.1.112
+        ipv4_address: 177.1.1.112
     restart: unless-stopped
     ports:
       - ${QDRANT_PORT_HOST}:${QDRANT_PORT_CONT}
